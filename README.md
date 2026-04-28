@@ -126,9 +126,6 @@ This is a machine learning prediction tool, **not a medical diagnosis**. Please 
 
 ---
 
-<p align="center">
-  Made with 💜 by <b>Prachi</b> · MCA · Galgotias College of Engineering & Technology
-</p>
-<p align="center">
+
   🌙 <i>Sleep well, live well</i> 🌙
-</p>
+
