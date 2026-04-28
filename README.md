@@ -44,7 +44,8 @@ Theme      → Dark mode with cozy rainy backgrounds 🌧️
 
 ## 📸 Screenshots
 
-> *coming soon* ✨
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/56930687-ab4c-445b-8a16-f2debd59847a" />
+
 
 ---
 
