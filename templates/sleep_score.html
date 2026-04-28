@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sleep Score | Sleepy Whisper</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; background:linear-gradient(rgba(15,15,26,0.85),rgba(15,15,26,0.92)),url('/static/images/bg1.jpg') center/cover no-repeat fixed; color:#e0e0e0; min-height:100vh; }
+        .navbar { background:rgba(15,12,41,0.95); backdrop-filter:blur(10px); padding:15px 30px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); position:sticky; top:0; z-index:100; }
+        .logo { font-size:1.3rem; font-weight:700; color:#c4b5fd; } .logo span { color:#818cf8; }
+        .nav-links { display:flex; gap:22px; flex-wrap:wrap; } .nav-links a { color:#999; text-decoration:none; font-size:0.88rem; transition:color 0.3s; } .nav-links a:hover,.nav-links a.active { color:#c4b5fd; }
+
+        .container { max-width:900px; margin:0 auto; padding:35px 20px; }
+        h1 { text-align:center; font-size:2rem; font-weight:700; background:linear-gradient(90deg,#c4b5fd,#818cf8,#60a5fa); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:8px; }
+        .subtitle { text-align:center; color:#777; margin-bottom:35px; }
+
+        .form-card { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:30px; backdrop-filter:blur(10px); margin-bottom:25px; }
+        .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+        .form-group { display:flex; flex-direction:column; }
+        .form-group label { font-size:0.82rem; color:#888; margin-bottom:5px; font-weight:500; }
+        .form-group input,.form-group select { padding:11px 13px; border:1px solid rgba(255,255,255,0.1); border-radius:10px; background:rgba(255,255,255,0.05); color:#e0e0e0; font-size:0.93rem; font-family:inherit; outline:none; transition:border 0.3s; }
+        .form-group input:focus,.form-group select:focus { border-color:#c4b5fd; }
+        .form-group select option { background:#1a1a3e; }
+
+        .slider-group { grid-column:1/-1; }
+        .slider-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+        .slider-value { background:linear-gradient(135deg,#7c3aed,#6366f1); color:white; padding:2px 12px; border-radius:20px; font-size:0.85rem; font-weight:600; }
+        input[type="range"] { width:100%; height:6px; -webkit-appearance:none; appearance:none; background:linear-gradient(90deg,#7c3aed,#6366f1,#3b82f6); border-radius:5px; outline:none; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; width:20px; height:20px; background:#c4b5fd; border-radius:50%; cursor:pointer; box-shadow:0 0 10px rgba(196,181,253,0.5); }
+
+        .submit-btn { display:block; width:100%; max-width:320px; margin:25px auto 0; padding:13px; background:linear-gradient(135deg,#7c3aed,#6366f1,#3b82f6); color:#fff; border:none; border-radius:12px; font-size:1rem; font-weight:600; cursor:pointer; font-family:inherit; transition:transform 0.2s,box-shadow 0.3s; }
+        .submit-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(99,102,241,0.4); }
+
+        .disclaimer { text-align:center; color:#666; font-size:0.78rem; margin-top:12px; font-style:italic; }
+
+        .result-section { display:none; animation:fadeIn 0.6s ease; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)} }
+
+        .score-display { text-align:center; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:40px; margin-bottom:25px; }
+        .score-circle { position:relative; width:200px; height:200px; margin:0 auto 20px; }
+        .score-circle svg { transform:rotate(-90deg); width:200px; height:200px; }
+        .score-circle .bg-circle { fill:none; stroke:rgba(255,255,255,0.06); stroke-width:12; }
+        .score-circle .progress-circle { fill:none; stroke-width:12; stroke-linecap:round; stroke-dasharray:565; stroke-dashoffset:565; transition:stroke-dashoffset 1.5s ease; }
+        .score-number { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:3rem; font-weight:800; }
+        .score-label { font-size:0.85rem; color:#777; position:absolute; top:65%; left:50%; transform:translateX(-50%); }
+
+        .rating-text { font-size:1.5rem; font-weight:700; margin-bottom:5px; }
+        .rating-emoji { font-size:2rem; margin-bottom:10px; }
+        .tip-text { color:#aaa; font-size:0.92rem; max-width:500px; margin:0 auto; line-height:1.6; }
+
+        .breakdown-card { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:18px; padding:28px; margin-bottom:25px; }
+        .breakdown-title { font-size:1.05rem; font-weight:600; margin-bottom:18px; color:#c4b5fd; }
+        .breakdown-item { display:flex; align-items:center; justify-content:space-between; padding:11px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+        .breakdown-item:last-child { border-bottom:none; }
+        .breakdown-left { display:flex; flex-direction:column; gap:3px; }
+        .breakdown-name { font-size:0.9rem; font-weight:500; }
+        .breakdown-value-text { font-size:0.78rem; color:#777; }
+        .breakdown-right { display:flex; align-items:center; gap:12px; }
+        .breakdown-bar { width:120px; height:8px; background:rgba(255,255,255,0.06); border-radius:4px; overflow:hidden; }
+        .breakdown-bar-fill { height:100%; border-radius:4px; transition:width 1s ease; }
+        .breakdown-score { font-size:0.88rem; font-weight:600; min-width:50px; text-align:right; }
+
+        .actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+        .btn-secondary { padding:10px 24px; background:rgba(255,255,255,0.05); border:1px solid rgba(196,181,253,0.3); color:#c4b5fd; border-radius:10px; font-size:0.9rem; cursor:pointer; font-family:inherit; transition:all 0.3s; text-decoration:none; }
+        .btn-secondary:hover { background:rgba(196,181,253,0.1); }
+
+        .footer { text-align:center; padding:25px; color:#555; font-size:0.82rem; margin-top:30px; }
+        @media(max-width:600px){ .form-grid{grid-template-columns:1fr;} }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Sleepy<span>Whisper</span></div>
+        <div class="nav-links">
+            <a href="/">Predict</a>
+            <a href="/visualization">Visualize</a>
+            <a href="/history">History</a>
+            <a href="/chatbot">Chatbot</a>
+            <a href="/results">Models</a>
+            <a href="/sleep-score" class="active">Sleep Score</a>
+            <a href="/trends">Trends</a>
+            <a href="/about">About</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Sleep Score Calculator</h1>
+        <p class="subtitle">Answer a few simple questions to know your sleep health score</p>
+
+        <div class="form-card" id="formCard">
+            <div class="form-grid">
+                <div class="form-group"><label>How many hours do you sleep?</label><input type="number" id="sleepDuration" value="7.0" min="1" max="14" step="0.5" placeholder="e.g. 7"></div>
+                <div class="form-group"><label>How active are you daily?</label>
+                    <select id="physicalActivity">
+                        <option value="15">Mostly sitting (no exercise)</option>
+                        <option value="30">Light activity (short walks)</option>
+                        <option value="50" selected>Moderate (regular walking/yoga)</option>
+                        <option value="70">Active (gym/sports)</option>
+                        <option value="90">Very active (intense daily workout)</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>How does your heart feel usually?</label>
+                    <select id="heartRate">
+                        <option value="62">Slow / Very relaxed</option>
+                        <option value="70" selected>Normal / Steady</option>
+                        <option value="80">Slightly fast sometimes</option>
+                        <option value="90">Fast / Racing often</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Your body type?</label>
+                    <select id="bmiCategory">
+                        <option value="Normal">Slim / Average</option>
+                        <option value="Normal Weight">Normal / Fit</option>
+                        <option value="Overweight">Slightly heavy</option>
+                        <option value="Obese">Overweight / Heavy</option>
+                    </select>
+                </div>
+                <div class="form-group slider-group">
+                    <div class="slider-header"><label>How well do you sleep? (1 = terrible, 10 = amazing)</label><span class="slider-value" id="qualityValue">7</span></div>
+                    <input type="range" id="qualityOfSleep" min="1" max="10" value="7" oninput="document.getElementById('qualityValue').textContent=this.value">
+                </div>
+                <div class="form-group slider-group">
+                    <div class="slider-header"><label>How stressed are you? (1 = chill, 10 = very stressed)</label><span class="slider-value" id="stressValue">5</span></div>
+                    <input type="range" id="stressLevel" min="1" max="10" value="5" oninput="document.getElementById('stressValue').textContent=this.value">
+                </div>
+            </div>
+            <button class="submit-btn" onclick="calculateScore()">Calculate My Sleep Score</button>
+            <p class="disclaimer">This is a wellness tool, not a medical diagnosis.</p>
+        </div>
+
+        <div class="result-section" id="resultSection">
+            <div class="score-display">
+                <div class="rating-emoji" id="ratingEmoji"></div>
+                <div class="score-circle">
+                    <svg viewBox="0 0 200 200"><circle class="bg-circle" cx="100" cy="100" r="90"></circle><circle class="progress-circle" id="progressCircle" cx="100" cy="100" r="90"></circle></svg>
+                    <div class="score-number" id="scoreNumber">0</div>
+                    <div class="score-label">out of 100</div>
+                </div>
+                <div class="rating-text" id="ratingText"></div>
+                <p class="tip-text" id="tipText"></p>
+            </div>
+            <div class="breakdown-card"><div class="breakdown-title">Score Breakdown</div><div id="breakdownList"></div></div>
+            <div class="actions">
+                <button class="btn-secondary" onclick="resetForm()">Calculate Again</button>
+                <a href="/trends" class="btn-secondary">View My Trends</a>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">Sleepy Whisper &mdash; Sleep Disorder Forecast Using Machine Learning</footer>
+
+    <script>
+        const labels={'sleep_duration':{name:'Sleep Duration',icon:'🛏️'},'quality_of_sleep':{name:'Sleep Quality',icon:'⭐'},'stress_level':{name:'Stress Level',icon:'😰'},'physical_activity':{name:'Physical Activity',icon:'🏃'},'heart_rate':{name:'Heart Rate',icon:'❤️'},'bmi_category':{name:'Body Type',icon:'⚖️'}};
+
+        function calculateScore(){
+            const d={sleep_duration:document.getElementById('sleepDuration').value,quality_of_sleep:document.getElementById('qualityOfSleep').value,stress_level:document.getElementById('stressLevel').value,physical_activity:document.getElementById('physicalActivity').value,heart_rate:document.getElementById('heartRate').value,bmi_category:document.getElementById('bmiCategory').value};
+            fetch('/calculate-score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).then(r=>r.json()).then(r=>showResult(r)).catch(()=>showResult(clientCalc(d)));
+        }
+
+        function clientCalc(d){let s=0,b={};const sd=parseFloat(d.sleep_duration);let ds=sd>=7&&sd<=9?30:sd>=6&&sd<7||sd>9&&sd<=10?22:sd>=5||sd>10?15:8;s+=ds;b.sleep_duration={score:ds,max:30,value:sd};const q=parseInt(d.quality_of_sleep),qs=Math.round(q/10*25);s+=qs;b.quality_of_sleep={score:qs,max:25,value:q};const st=parseInt(d.stress_level),ss=Math.round((10-st)/10*20);s+=ss;b.stress_level={score:ss,max:20,value:st};const a=parseInt(d.physical_activity),as2=a>=60?10:a>=45?8:a>=30?6:3;s+=as2;b.physical_activity={score:as2,max:10,value:a};const hr=parseInt(d.heart_rate),hs=hr>=60&&hr<=75?10:hr>=55&&hr<=85?7:4;s+=hs;b.heart_rate={score:hs,max:10,value:hr};const bmi=d.bmi_category,bs=bmi==='Normal'||bmi==='Normal Weight'?5:bmi==='Overweight'?3:1;s+=bs;b.bmi_category={score:bs,max:5,value:bmi};let r,c,e,t;if(s>=85){r='Excellent';c='#10b981';e='🌟';t='Your sleep health is excellent! Keep it up.';}else if(s>=70){r='Good';c='#3b82f6';e='😊';t='Good sleep health. Try reducing stress a bit more.';}else if(s>=50){r='Fair';c='#f59e0b';e='😐';t='Average score. Try improving your sleep duration and quality.';}else if(s>=30){r='Poor';c='#f97316';e='😟';t='Poor sleep health. Consider lifestyle changes.';}else{r='Critical';c='#ef4444';e='🚨';t='Very poor sleep health. Please consult a doctor.';}saveTrend(s,r,d);return{score:s,rating:r,color:c,emoji:e,tip:t,breakdown:b};}
+
+        function saveTrend(s,r,d){let t=JSON.parse(localStorage.getItem('sleepTrends')||'[]');t.push({date:new Date().toISOString().slice(0,16).replace('T',' '),score:s,rating:r,sleep_duration:parseFloat(d.sleep_duration),quality:parseInt(d.quality_of_sleep),stress:parseInt(d.stress_level)});if(t.length>30)t=t.slice(-30);localStorage.setItem('sleepTrends',JSON.stringify(t));}
+
+        function showResult(r){document.getElementById('formCard').style.display='none';const sec=document.getElementById('resultSection');sec.style.display='block';const se=document.getElementById('scoreNumber'),ci=document.getElementById('progressCircle'),circ=2*Math.PI*90;se.style.color=r.color;ci.style.stroke=r.color;let cur=0;const inc=r.score/60;const tm=setInterval(()=>{cur+=inc;if(cur>=r.score){cur=r.score;clearInterval(tm);}se.textContent=Math.round(cur);},16);setTimeout(()=>{ci.style.strokeDashoffset=circ-(r.score/100)*circ;},100);document.getElementById('ratingEmoji').textContent=r.emoji;document.getElementById('ratingText').style.color=r.color;document.getElementById('ratingText').textContent=r.rating;document.getElementById('tipText').textContent=r.tip;const list=document.getElementById('breakdownList');list.innerHTML='';for(const[k,v]of Object.entries(r.breakdown)){const info=labels[k]||{name:k,icon:'📊'};const pct=v.score/v.max*100;const bc=pct>=70?'#10b981':pct>=40?'#f59e0b':'#ef4444';list.innerHTML+=`<div class="breakdown-item"><div class="breakdown-left"><div class="breakdown-name">${info.icon} ${info.name}</div><div class="breakdown-value-text">Value: ${v.value}</div></div><div class="breakdown-right"><div class="breakdown-bar"><div class="breakdown-bar-fill" style="width:${pct}%;background:${bc}"></div></div><div class="breakdown-score" style="color:${bc}">${v.score}/${v.max}</div></div></div>`;}}
+
+        function resetForm(){document.getElementById('formCard').style.display='block';document.getElementById('resultSection').style.display='none';}
+    </script>
+</body>
+</html>

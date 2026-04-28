@@ -1,0 +1,64 @@
+{
+  "gbc": {
+    "train_accuracy": 98.41,
+    "test_accuracy": 97.23,
+    "precision": 97.23,
+    "recall": 97.23,
+    "f1_score": 97.23,
+    "confusion_matrix": [
+      [
+        961,
+        23,
+        16
+      ],
+      [
+        14,
+        977,
+        9
+      ],
+      [
+        13,
+        8,
+        979
+      ]
+    ]
+  },
+  "qda": {
+    "train_accuracy": 91.14,
+    "test_accuracy": 91.47,
+    "precision": 91.59,
+    "recall": 91.47,
+    "f1_score": 91.48,
+    "confusion_matrix": [
+      [
+        939,
+        38,
+        23
+      ],
+      [
+        75,
+        892,
+        33
+      ],
+      [
+        54,
+        33,
+        913
+      ]
+    ]
+  },
+  "feature_importance": {
+    "Diastolic_BP": 0.2598179158635657,
+    "BMI Category": 0.22297182126473705,
+    "Occupation": 0.18100644671818747,
+    "Physical Activity Level": 0.06287717539921099,
+    "Sleep Duration": 0.06130529620782155,
+    "Systolic_BP": 0.05887085161752032,
+    "Heart Rate": 0.052401439382030304,
+    "Daily Steps": 0.043868735347216144,
+    "Age": 0.04163776783179101,
+    "Gender": 0.005661051519164704,
+    "Stress Level": 0.005127462933687633,
+    "Quality of Sleep": 0.0044540359150669695
+  }
+}

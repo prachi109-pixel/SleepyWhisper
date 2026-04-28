@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Results | Sleepy Whisper</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; background:linear-gradient(rgba(15,15,26,0.85),rgba(15,15,26,0.92)),url('/static/images/bg1.jpg') center/cover no-repeat fixed; color:#e0e0e0; min-height:100vh; }
+        .navbar { background:rgba(15,12,41,0.95); backdrop-filter:blur(10px); padding:15px 30px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); position:sticky; top:0; z-index:100; }
+        .logo { font-size:1.3rem; font-weight:700; color:#c4b5fd; } .logo span { color:#818cf8; }
+        .nav-links { display:flex; gap:22px; } .nav-links a { color:#999; text-decoration:none; font-size:0.88rem; transition:color 0.3s; } .nav-links a:hover,.nav-links a.active { color:#c4b5fd; }
+        .container { max-width:1100px; margin:0 auto; padding:30px 20px; }
+        h1 { text-align:center; font-size:2rem; font-weight:700; background:linear-gradient(90deg,#c4b5fd,#818cf8,#60a5fa); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:8px; }
+        .subtitle { text-align:center; color:#777; margin-bottom:35px; }
+        .comparison-grid { display:grid; grid-template-columns:1fr 1fr; gap:25px; margin-bottom:35px; }
+        .model-card { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:18px; padding:28px; }
+        .model-card h2 { font-size:1.05rem; font-weight:600; margin-bottom:18px; color:#c4b5fd; }
+        .metric-row { display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+        .metric-row:last-child { border-bottom:none; }
+        .metric-label { color:#888; font-size:0.88rem; }
+        .metric-value { font-size:1.05rem; font-weight:600; color:#10b981; }
+        .cm-section { margin-top:20px; }
+        .cm-section h3 { font-size:0.9rem; color:#777; margin-bottom:8px; }
+        .cm-table { width:100%; border-collapse:collapse; font-size:0.82rem; }
+        .cm-table th,.cm-table td { padding:7px 10px; text-align:center; border:1px solid rgba(255,255,255,0.06); }
+        .cm-table th { background:rgba(196,181,253,0.08); color:#c4b5fd; font-weight:500; }
+        .cm-table td { color:#bbb; }
+        .cm-diag { background:rgba(16,185,129,0.12); color:#10b981; font-weight:600; }
+        .fi-section { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:18px; padding:28px; }
+        .fi-section h2 { font-size:1.05rem; font-weight:600; margin-bottom:18px; color:#c4b5fd; }
+        .fi-item { display:flex; align-items:center; margin-bottom:10px; }
+        .fi-name { width:170px; font-size:0.83rem; color:#aaa; flex-shrink:0; }
+        .fi-bar-bg { flex:1; height:9px; background:rgba(255,255,255,0.05); border-radius:5px; overflow:hidden; margin:0 10px; }
+        .fi-bar { height:100%; background:linear-gradient(90deg,#7c3aed,#6366f1); border-radius:5px; }
+        .fi-val { font-size:0.83rem; color:#888; width:50px; text-align:right; }
+        .footer { text-align:center; padding:25px; color:#555; font-size:0.82rem; margin-top:30px; }
+        @media (max-width:768px) { .comparison-grid { grid-template-columns:1fr; } }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Sleepy<span>Whisper</span></div>
+        <div class="nav-links">
+            <a href="/">Predict</a>
+            <a href="/visualization">Visualize</a>
+            <a href="/history">History</a>
+            <a href="/chatbot">Chatbot</a>
+            <a href="/results" class="active">Models</a>
+            <a href="/sleep-score">Sleep Score</a>
+            <a href="/trends">Trends</a>
+            <a href="/about">About</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Model Performance</h1>
+        <p class="subtitle">Gradient Boosting Classifier vs Quadratic Discriminant Analysis</p>
+
+        <div class="comparison-grid">
+            <div class="model-card">
+                <h2>Gradient Boosting Classifier</h2>
+                <div class="metric-row"><span class="metric-label">Training Accuracy</span><span class="metric-value" id="gbc-train"></span></div>
+                <div class="metric-row"><span class="metric-label">Testing Accuracy</span><span class="metric-value" id="gbc-test"></span></div>
+                <div class="metric-row"><span class="metric-label">Precision</span><span class="metric-value" id="gbc-precision"></span></div>
+                <div class="metric-row"><span class="metric-label">Recall</span><span class="metric-value" id="gbc-recall"></span></div>
+                <div class="metric-row"><span class="metric-label">F1-Score</span><span class="metric-value" id="gbc-f1"></span></div>
+                <div class="cm-section"><h3>Confusion Matrix</h3><table class="cm-table" id="gbc-cm"></table></div>
+            </div>
+            <div class="model-card">
+                <h2>Quadratic Discriminant Analysis</h2>
+                <div class="metric-row"><span class="metric-label">Training Accuracy</span><span class="metric-value" id="qda-train"></span></div>
+                <div class="metric-row"><span class="metric-label">Testing Accuracy</span><span class="metric-value" id="qda-test"></span></div>
+                <div class="metric-row"><span class="metric-label">Precision</span><span class="metric-value" id="qda-precision"></span></div>
+                <div class="metric-row"><span class="metric-label">Recall</span><span class="metric-value" id="qda-recall"></span></div>
+                <div class="metric-row"><span class="metric-label">F1-Score</span><span class="metric-value" id="qda-f1"></span></div>
+                <div class="cm-section"><h3>Confusion Matrix</h3><table class="cm-table" id="qda-cm"></table></div>
+            </div>
+        </div>
+
+        <div class="fi-section">
+            <h2>Feature Importance (Gradient Boosting)</h2>
+            <div id="fi-container"></div>
+        </div>
+    </div>
+
+    <footer class="footer">Sleepy Whisper &mdash; Sleep Disorder Forecast Using Machine Learning</footer>
+
+    <script>
+        const modelResults = {{ results | tojson }};
+        const classes = ['Healthy','Insomnia','Sleep Apnea'];
+
+        function populate(prefix, data) {
+            document.getElementById(prefix+'-train').textContent = data.train_accuracy+'%';
+            document.getElementById(prefix+'-test').textContent = data.test_accuracy+'%';
+            document.getElementById(prefix+'-precision').textContent = data.precision+'%';
+            document.getElementById(prefix+'-recall').textContent = data.recall+'%';
+            document.getElementById(prefix+'-f1').textContent = data.f1_score+'%';
+            const cm = data.confusion_matrix;
+            let html = '<tr><th></th>'; classes.forEach(c => html += `<th>${c}</th>`); html += '</tr>';
+            cm.forEach((row,i) => { html += `<tr><th>${classes[i]}</th>`; row.forEach((v,j) => { html += `<td${i===j?' class="cm-diag"':''}>${v}</td>`; }); html += '</tr>'; });
+            document.getElementById(prefix+'-cm').innerHTML = html;
+        }
+        populate('gbc', modelResults.gbc);
+        populate('qda', modelResults.qda);
+
+        const fi = modelResults.feature_importance;
+        const maxVal = Math.max(...Object.values(fi));
+        let fiHTML = '';
+        for (const [name, val] of Object.entries(fi)) {
+            const pct = (val/maxVal*100).toFixed(1);
+            fiHTML += `<div class="fi-item"><span class="fi-name">${name}</span><div class="fi-bar-bg"><div class="fi-bar" style="width:${pct}%"></div></div><span class="fi-val">${(val*100).toFixed(1)}%</span></div>`;
+        }
+        document.getElementById('fi-container').innerHTML = fiHTML;
+    </script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About | Sleepy Whisper</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; background:linear-gradient(rgba(15,15,26,0.85),rgba(15,15,26,0.92)),url('/static/images/bg3.jpg') center/cover no-repeat fixed; color:#e0e0e0; min-height:100vh; }
+        .navbar { background:rgba(15,12,41,0.95); backdrop-filter:blur(10px); padding:15px 30px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); }
+        .logo { font-size:1.3rem; font-weight:700; color:#c4b5fd; } .logo span { color:#818cf8; }
+        .nav-links { display:flex; gap:22px; } .nav-links a { color:#999; text-decoration:none; font-size:0.88rem; transition:color 0.3s; } .nav-links a:hover,.nav-links a.active { color:#c4b5fd; }
+        .container { max-width:850px; margin:0 auto; padding:35px 20px; }
+        h1 { text-align:center; font-size:2rem; font-weight:700; background:linear-gradient(90deg,#c4b5fd,#818cf8,#60a5fa); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:30px; }
+        .about-card { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:18px; padding:28px; margin-bottom:20px; }
+        .about-card h2 { font-size:1.05rem; color:#c4b5fd; margin-bottom:12px; }
+        .about-card p,.about-card li { color:#aaa; font-size:0.93rem; line-height:1.7; }
+        .about-card ul { padding-left:18px; margin-top:8px; }
+        .about-card li { margin-bottom:4px; }
+        .tech-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px; margin-top:12px; }
+        .tech-item { background:rgba(196,181,253,0.06); border:1px solid rgba(196,181,253,0.12); border-radius:10px; padding:10px 14px; font-size:0.88rem; color:#bbb; text-align:center; }
+        .features-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
+        .feature-item { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:10px; padding:14px; }
+        .feature-item h3 { font-size:0.9rem; color:#818cf8; margin-bottom:5px; }
+        .feature-item p { font-size:0.82rem; color:#888; }
+        .ref { color:#777; font-size:0.88rem; line-height:1.6; }
+        .footer { text-align:center; padding:25px; color:#555; font-size:0.82rem; margin-top:20px; }
+        @media (max-width:600px) { .features-grid { grid-template-columns:1fr; } }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Sleepy<span>Whisper</div>
+        <div class="nav-links">
+            <a href="/">Predict</a>
+            <a href="/visualization">Visualize</a>
+            <a href="/history">History</a>
+            <a href="/chatbot">Chatbot</a>
+            <a href="/results">Models</a>
+            <a href="/sleep-score">Sleep Score</a>
+            <a href="/trends">Trends</a>
+            <a href="/about" class="active">About</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>About Sleepy Whisper</h1>
+
+        <div class="about-card">
+            <h2>Project Overview</h2>
+            <p>
+                <strong>Sleepy Whisper</strong> is a Sleep Disorder Forecast system that leverages advanced machine learning
+                techniques to classify sleep patterns into three categories: <strong>Healthy</strong>,
+                <strong>Insomnia</strong>, and <strong>Sleep Apnea</strong>. Built with Python and Flask,
+                it provides an intuitive web interface for comprehensive diagnostic insights.
+            </p>
+        </div>
+
+        <div class="about-card">
+            <h2>Features</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <h3>ML Prediction</h3>
+                    <p>Predict sleep disorders using Gradient Boosting & QDA models with high accuracy.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Data Visualization</h3>
+                    <p>Interactive charts analyzing 15,000 sleep health records with Chart.js.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Prediction History</h3>
+                    <p>Track all past predictions with detailed input parameters and results.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>PDF Reports</h3>
+                    <p>Download professional PDF reports with prediction details and recommendations.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Sleep Chatbot</h3>
+                    <p>AI-powered chatbot for sleep health tips, disorder info, and wellness advice.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Model Comparison</h3>
+                    <p>Side-by-side comparison of GBC and QDA with confusion matrices and metrics.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="about-card">
+            <h2>Machine Learning Models</h2>
+            <p><strong>1. Gradient Boosting Classifier</strong> — An ensemble method that sequentially adds decision trees, where each tree corrects errors of the previous one. Achieves ~97% test accuracy.</p>
+            <br>
+            <p><strong>2. Quadratic Discriminant Analysis</strong> — A probabilistic classifier using Gaussian distributions with flexible quadratic decision boundaries. Achieves ~91% test accuracy.</p>
+        </div>
+
+        <div class="about-card">
+            <h2>Dataset</h2>
+            <p>The <strong>Sleep Health and Lifestyle Dataset</strong> contains 15,000 records with 13 features including sleep duration, quality, physical activity, stress, BMI, blood pressure, heart rate, daily steps, occupation, gender, and age.</p>
+        </div>
+
+        <div class="about-card">
+            <h2>Technology Stack</h2>
+            <div class="tech-grid">
+                <div class="tech-item">Python 3.12+</div>
+                <div class="tech-item">Flask</div>
+                <div class="tech-item">Scikit-learn</div>
+                <div class="tech-item">Pandas / NumPy</div>
+                <div class="tech-item">Chart.js</div>
+                <div class="tech-item">FPDF2</div>
+                <div class="tech-item">HTML / CSS / JS</div>
+                <div class="tech-item">Pickle</div>
+            </div>
+        </div>
+
+        <div class="about-card">
+            <h2>IEEE Base Paper</h2>
+            <p class="ref">Talal Sarheed Alshammari, "Applying Machine Learning Algorithms for the Classification of Sleep Disorders", <em>IEEE Access</em>, Volume: 12, 2024.</p>
+        </div>
+    </div>
+
+    <footer class="footer">Sleepy Whisper &mdash; Sleep Disorder Forecast Using Machine Learning</footer>
+</body>
+</html>

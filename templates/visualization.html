@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Visualization | SleepyWhisper</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; background:linear-gradient(rgba(15,15,26,0.85),rgba(15,15,26,0.92)),url('/static/images/bg3.jpg') center/cover no-repeat fixed; color:#e0e0e0; min-height:100vh; }
+        .navbar { background:rgba(15,12,41,0.95); backdrop-filter:blur(10px); padding:15px 30px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); position:sticky; top:0; z-index:100; }
+        .logo { font-size:1.3rem; font-weight:700; color:#c4b5fd; } .logo span { color:#818cf8; }
+        .nav-links { display:flex; gap:22px; } .nav-links a { color:#999; text-decoration:none; font-size:0.88rem; transition:color 0.3s; } .nav-links a:hover,.nav-links a.active { color:#c4b5fd; }
+        .container { max-width:1150px; margin:0 auto; padding:30px 20px; }
+        h1 { text-align:center; font-size:2rem; font-weight:700; background:linear-gradient(90deg,#c4b5fd,#818cf8,#60a5fa); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:8px; }
+        .subtitle { text-align:center; color:#777; margin-bottom:35px; font-size:0.95rem; }
+        .charts-grid { display:grid; grid-template-columns:1fr 1fr; gap:25px; }
+        .chart-card { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:18px; padding:25px; }
+        .chart-card h3 { font-size:0.95rem; color:#c4b5fd; margin-bottom:15px; font-weight:600; }
+        .chart-card canvas { max-height:280px; }
+        .chart-card.full { grid-column: 1 / -1; }
+        .loading { text-align:center; padding:60px; color:#888; font-size:1.1rem; }
+        .footer { text-align:center; padding:25px; color:#555; font-size:0.82rem; margin-top:30px; }
+        @media (max-width:768px) { .charts-grid { grid-template-columns:1fr; } }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Sleepy<span>Whisper</div>
+        <div class="nav-links">
+            <a href="/">Predict</a>
+            <a href="/visualization" class="active">Visualize</a>
+            <a href="/history">History</a>
+            <a href="/chatbot">Chatbot</a>
+            <a href="/results">Models</a>
+            <a href="/sleep-score">Sleep Score</a>
+            <a href="/trends">Trends</a>
+            <a href="/about">About</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Dataset Visualization</h1>
+        <p class="subtitle">Interactive analysis of 15,000 sleep health records</p>
+        <div id="loading" class="loading">Loading charts...</div>
+        <div class="charts-grid" id="chartsGrid" style="display:none;">
+            <div class="chart-card"><h3>Sleep Disorder Distribution</h3><canvas id="chart1"></canvas></div>
+            <div class="chart-card"><h3>Avg Sleep Duration by Disorder</h3><canvas id="chart2"></canvas></div>
+            <div class="chart-card"><h3>Avg Stress Level by Disorder</h3><canvas id="chart3"></canvas></div>
+            <div class="chart-card"><h3>Avg Heart Rate by Disorder</h3><canvas id="chart4"></canvas></div>
+            <div class="chart-card"><h3>Gender vs Sleep Disorder</h3><canvas id="chart5"></canvas></div>
+            <div class="chart-card"><h3>BMI Category vs Sleep Disorder</h3><canvas id="chart6"></canvas></div>
+            <div class="chart-card"><h3>Avg Physical Activity by Disorder</h3><canvas id="chart7"></canvas></div>
+            <div class="chart-card"><h3>Avg Sleep Quality by Disorder</h3><canvas id="chart8"></canvas></div>
+            <div class="chart-card full"><h3>Occupation vs Sleep Disorder</h3><canvas id="chart9"></canvas></div>
+            <div class="chart-card full"><h3>Model Accuracy Comparison</h3><canvas id="chart10"></canvas></div>
+        </div>
+    </div>
+
+    <footer class="footer">Sleepy Whisper &mdash; Sleep Disorder Forecast Using Machine Learning</footer>
+
+    <script>
+        Chart.defaults.color = '#999';
+        Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+
+        const COLORS = { 'Healthy':'#10b981', 'Insomnia':'#f59e0b', 'Sleep Apnea':'#ef4444' };
+        const BG = { 'Healthy':'rgba(16,185,129,0.7)', 'Insomnia':'rgba(245,158,11,0.7)', 'Sleep Apnea':'rgba(239,68,68,0.7)' };
+
+        async function loadCharts() {
+            const res = await fetch('/api/visualization-data');
+            const data = await res.json();
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('chartsGrid').style.display = 'grid';
+
+            // 1. Disorder Distribution (Doughnut)
+            new Chart(document.getElementById('chart1'), {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(data.disorder_distribution),
+                    datasets: [{ data: Object.values(data.disorder_distribution), backgroundColor: ['#10b981','#f59e0b','#ef4444'], borderWidth: 0 }]
+                },
+                options: { plugins: { legend: { position: 'bottom' } } }
+            });
+
+            // 2. Avg Sleep Duration (Bar)
+            new Chart(document.getElementById('chart2'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(data.avg_sleep_duration),
+                    datasets: [{ label: 'Hours', data: Object.values(data.avg_sleep_duration), backgroundColor: ['#10b981','#f59e0b','#ef4444'], borderRadius: 8 }]
+                },
+                options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: false } } }
+            });
+
+            // 3. Avg Stress (Bar)
+            new Chart(document.getElementById('chart3'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(data.avg_stress_level),
+                    datasets: [{ label: 'Stress Level', data: Object.values(data.avg_stress_level), backgroundColor: ['#10b981','#f59e0b','#ef4444'], borderRadius: 8 }]
+                },
+                options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+            });
+
+            // 4. Avg Heart Rate (Bar)
+            new Chart(document.getElementById('chart4'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(data.avg_heart_rate),
+                    datasets: [{ label: 'BPM', data: Object.values(data.avg_heart_rate), backgroundColor: ['#10b981','#f59e0b','#ef4444'], borderRadius: 8 }]
+                },
+                options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: false } } }
+            });
+
+            // 5. Gender (Grouped Bar)
+            const genderLabels = Object.keys(data.gender_disorder);
+            const genderDS = genderLabels.map(g => ({
+                label: g, data: Object.keys(COLORS).map(d => data.gender_disorder[g][d] || 0),
+                backgroundColor: genderLabels.indexOf(g) === 0 ? '#818cf8' : '#f472b6', borderRadius: 6
+            }));
+            new Chart(document.getElementById('chart5'), {
+                type: 'bar',
+                data: { labels: Object.keys(COLORS), datasets: genderDS },
+                options: { plugins: { legend: { position: 'bottom' } } }
+            });
+
+            // 6. BMI (Grouped Bar)
+            const bmiLabels = Object.keys(data.bmi_disorder);
+            const bmiColors = ['#818cf8','#34d399','#fbbf24','#f87171'];
+            const bmiDS = bmiLabels.map((b, i) => ({
+                label: b, data: Object.keys(COLORS).map(d => data.bmi_disorder[b][d] || 0),
+                backgroundColor: bmiColors[i % bmiColors.length], borderRadius: 6
+            }));
+            new Chart(document.getElementById('chart6'), {
+                type: 'bar',
+                data: { labels: Object.keys(COLORS), datasets: bmiDS },
+                options: { plugins: { legend: { position: 'bottom' } } }
+            });
+
+            // 7. Avg Physical Activity (Bar)
+            new Chart(document.getElementById('chart7'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(data.avg_activity),
+                    datasets: [{ label: 'Min/day', data: Object.values(data.avg_activity), backgroundColor: ['#10b981','#f59e0b','#ef4444'], borderRadius: 8 }]
+                },
+                options: { plugins: { legend: { display: false } } }
+            });
+
+            // 8. Avg Sleep Quality (Bar)
+            new Chart(document.getElementById('chart8'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(data.avg_quality),
+                    datasets: [{ label: 'Quality /10', data: Object.values(data.avg_quality), backgroundColor: ['#10b981','#f59e0b','#ef4444'], borderRadius: 8 }]
+                },
+                options: { plugins: { legend: { display: false } } }
+            });
+
+            // 9. Occupation (Horizontal Stacked)
+            const occs = Object.keys(Object.values(data.occupation_disorder)[0] || {});
+            const occDS = Object.keys(COLORS).map(d => ({
+                label: d, data: occs.map(o => (data.occupation_disorder[d] || {})[o] || 0),
+                backgroundColor: BG[d], borderRadius: 4
+            }));
+            new Chart(document.getElementById('chart9'), {
+                type: 'bar',
+                data: { labels: occs, datasets: occDS },
+                options: { indexAxis: 'y', plugins: { legend: { position: 'bottom' } }, scales: { x: { stacked: true }, y: { stacked: true } } }
+            });
+
+            // 10. Model Comparison
+            const mr = data.model_results;
+            new Chart(document.getElementById('chart10'), {
+                type: 'bar',
+                data: {
+                    labels: ['Train Accuracy', 'Test Accuracy', 'Precision', 'Recall', 'F1-Score'],
+                    datasets: [
+                        { label: 'Gradient Boosting', data: [mr.gbc.train_accuracy, mr.gbc.test_accuracy, mr.gbc.precision, mr.gbc.recall, mr.gbc.f1_score], backgroundColor: 'rgba(129,140,248,0.7)', borderRadius: 6 },
+                        { label: 'QDA', data: [mr.qda.train_accuracy, mr.qda.test_accuracy, mr.qda.precision, mr.qda.recall, mr.qda.f1_score], backgroundColor: 'rgba(244,114,182,0.7)', borderRadius: 6 }
+                    ]
+                },
+                options: { plugins: { legend: { position: 'bottom' } }, scales: { y: { min: 80, max: 100 } } }
+            });
+        }
+        loadCharts();
+    </script>
+</body>
+</html>
