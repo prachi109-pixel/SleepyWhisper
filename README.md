@@ -44,7 +44,10 @@ Theme      → Dark mode with cozy rainy backgrounds 🌧️
 
 ## 📸 Screenshots
 
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/56930687-ab4c-445b-8a16-f2debd59847a" />
+<img width="1916" height="917" alt="image" src="https://github.com/user-attachments/assets/216aafb8-7a27-4c84-a367-e1be2f7f8ce8" />
+<img width="1872" height="902" alt="image" src="https://github.com/user-attachments/assets/0545ebc8-8906-4d58-aa51-c941d1e9cf95" />
+
+
 
 
 ---
